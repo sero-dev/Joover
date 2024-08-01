@@ -2,26 +2,24 @@ import { Component, input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 
 @Component({
-  selector: 'app-info-card',
+  selector: 'app-metric-card',
   standalone: true,
   imports: [MatCardModule],
   template: `
-    <mat-card class="h-56" appearance="outlined">
+    <mat-card class="h-full" appearance="outlined">
       <mat-card-header>
         <mat-card-subtitle class="mat-body-small">{{
           subtitle()
         }}</mat-card-subtitle>
-        <mat-card-title class="h-16 mat-title-medium">{{
-          title()
-        }}</mat-card-title>
       </mat-card-header>
-      <mat-card-content class="mt-4 mat-body-medium">
+      <mat-card-content
+        class="mt-auto text-9xl flex justify-center items-center"
+      >
         <ng-content></ng-content>
       </mat-card-content>
     </mat-card>
   `,
 })
-export class InfoCardComponent {
-  public title = input.required<string>();
+export class MetricCardComponent {
   public subtitle = input.required<string>();
 }

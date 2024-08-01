@@ -11,6 +11,7 @@ builder.Services.AddSignalR();
 builder.Services.AddScheduler();
 
 builder.Services.AddTransient<ProcessorUsageTask>();
+builder.Services.AddTransient<MemoryUsageTask>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -18,14 +19,19 @@ builder.Services.AddSwaggerGen();
 
 
 builder.Services.AddCors(opt => opt.AddDefaultPolicy(policy => {
-    policy.AllowAnyOrigin();
-    policy.AllowAnyMethod();
+    policy.WithOrigins("https://localhost:4200", "http://localhost:4200")
+        .AllowCredentials()
+        .AllowAnyHeader()
+        .AllowAnyMethod();
 }));
 
 var app = builder.Build();
 
 app.Services.UseScheduler(scheduler => {
     scheduler.Schedule<ProcessorUsageTask>()
+        .EverySecond();
+
+    scheduler.Schedule<MemoryUsageTask>()
         .EverySecond();
 });
 

@@ -7,16 +7,17 @@ import { Observable } from 'rxjs';
 })
 export class PartApiService {
   private readonly http = inject(HttpClient);
+  private readonly apiUrl = 'https://localhost:7043';
 
   public getProcessorInfo(): Observable<ProcessorInformation> {
-    return this.http.get<ProcessorInformation>('https://localhost:7043/api/part/processor');
+    return this.http.get<ProcessorInformation>(
+      `${this.apiUrl}/api/part/processor`
+    );
   }
 
   public getMemoryInfo(): Observable<MemoryInformation> {
-    return this.http.get<MemoryInformation>('https://localhost:7043/api/part/memory');
+    return this.http.get<MemoryInformation>(`${this.apiUrl}/api/part/memory`);
   }
-
-  public getLiveProcessorUsage() {}
 }
 
 export interface ProcessorInformation {

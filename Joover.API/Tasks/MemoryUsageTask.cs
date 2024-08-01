@@ -12,7 +12,7 @@ public class MemoryUsageTask(IHubContext<PartHub> partHub) : IInvocable
     public async Task Invoke()
     {
         var availableMemory = GetAvailableMemoryInMb();
-        Console.WriteLine("Available Memory: " + availableMemory);
+        await partHub.Clients.All.SendAsync("ReceiveAvailableMemory", availableMemory);
     }
 
     private float GetAvailableMemoryInMb()

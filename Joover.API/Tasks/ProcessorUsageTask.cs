@@ -11,8 +11,8 @@ public class ProcessorUsageTask(IHubContext<PartHub> partHub) : IInvocable
 
     public async Task Invoke()
     {
-        var cpuUsage = GetUsage();
-        Console.WriteLine("CPU Usage: " + cpuUsage);
+        var usage = GetUsage();
+        await partHub.Clients.All.SendAsync("ReceiveProcessorUsage", usage);
     }
 
     private float GetUsage()
