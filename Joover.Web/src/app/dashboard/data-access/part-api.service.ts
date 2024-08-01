@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -7,13 +8,15 @@ import { inject, Injectable } from '@angular/core';
 export class PartApiService {
   private readonly http = inject(HttpClient);
 
-  public getMemoryInfo() {
+  public getProcessorInfo(): Observable<ProcessorInformation> {
+    return this.http.get<ProcessorInformation>('https://localhost:7043/api/part/processor');
+  }
+
+  public getMemoryInfo(): Observable<MemoryInformation> {
     return this.http.get<MemoryInformation>('https://localhost:7043/api/part/memory');
   }
 
-  public getProcessorInfo() {
-    return this.http.get<ProcessorInformation>('https://localhost:7043/api/part/processor');
-  }
+  public getLiveProcessorUsage() {}
 }
 
 export interface ProcessorInformation {
