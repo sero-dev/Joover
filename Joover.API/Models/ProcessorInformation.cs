@@ -3,7 +3,6 @@
 public class ProcessorInformation
 {
     public required string Name { get; set; }
-    public float Usage { get; set; }
     public uint CoreCount { get; set; }
     public uint LogicalProcessorCount { get; set; }
     public uint MaxClockSpeed { get; set; }

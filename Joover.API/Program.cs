@@ -1,5 +1,3 @@
-using Joover.API.Service;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -9,8 +7,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<ProcessorService>();
-builder.Services.AddScoped<MemoryService>();
+
+builder.Services.AddCors(opt => opt.AddDefaultPolicy(policy => {
+    policy.AllowAnyOrigin();
+    policy.AllowAnyMethod();
+}));
 
 var app = builder.Build();
 
@@ -22,6 +23,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors();
 
 app.UseAuthorization();
 
