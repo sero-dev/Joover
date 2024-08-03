@@ -17,10 +17,10 @@ import { MemoryUsageTileComponent } from './feature/memory-usage-tile/memory-usa
     MemoryUsageTileComponent,
   ],
   template: `
-    <div class="grid grid-cols-4 gap-2">
-      <app-processor-info-tile class="col-span-3" />
+    <div class="grid grid-cols-2 gap-2 max-w-4xl mx-auto">
+      <app-processor-info-tile />
       <app-processor-usage-tile />
-      <app-memory-info-tile class="col-span-3" />
+      <app-memory-info-tile />
       <app-memory-usage-tile />
     </div>
   `,
