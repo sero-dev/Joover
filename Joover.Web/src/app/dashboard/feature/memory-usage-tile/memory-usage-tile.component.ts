@@ -1,8 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Signal } from '@angular/core';
 import { MetricCardComponent } from '../../ui/metric-card/metric-card.component';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { PartHubService } from '../../data-access/part-hub.service';
-import { combineLatest, map } from 'rxjs';
+import { catchError, combineLatest, map, of } from 'rxjs';
 import { PartApiService } from '../../data-access/part-api.service';
 
 @Component({
@@ -10,9 +10,19 @@ import { PartApiService } from '../../data-access/part-api.service';
   standalone: true,
   imports: [MetricCardComponent],
   template: `
+    @if(memoryUsageView().usage; as usage) {
     <app-metric-card subtitle="Memory Usage">
-      <div>{{ memoryUsage().toFixed(0) }}%</div>
+      <div>{{ usage.toFixed(0) }}%</div>
     </app-metric-card>
+    } @else if (memoryUsageView().error) {
+    <app-metric-card subtitle="Memory Usage">
+      <div class="text-red-500">Error</div>
+    </app-metric-card>
+    } @else {
+    <app-metric-card subtitle="Memory Usage">
+      <div>Error</div>
+    </app-metric-card>
+    }
   `,
   styles: ``,
 })
@@ -20,18 +30,35 @@ export class MemoryUsageTileComponent {
   private readonly partHub = inject(PartHubService);
   private readonly partApi = inject(PartApiService);
 
-  protected memoryUsage = toSignal(
+  protected memoryUsageView: Signal<MemoryUsageView> = toSignal(
     combineLatest([
       this.partHub.getLiveAvailableMemory(),
       this.partApi.getMemoryInfo(),
     ]).pipe(
       map(
-        ([usage, information]) => (1 - usage / information.totalCapacity) * 100
+        ([usage, information]) =>
+          ({
+            usage: (1 - usage / information.totalCapacity) * 100,
+            error: null,
+          } as MemoryUsageView)
+      ),
+      catchError(() =>
+        of<MemoryUsageView>({
+          usage: undefined,
+          error: 'Failed to get memory usage',
+        })
       )
     ),
-
     {
-      initialValue: 0,
+      initialValue: {
+        usage: undefined,
+        error: null,
+      } as MemoryUsageView,
     }
   );
+}
+
+interface MemoryUsageView {
+  usage: number | undefined;
+  error: string | null;
 }

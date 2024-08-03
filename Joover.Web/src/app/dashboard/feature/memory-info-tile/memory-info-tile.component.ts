@@ -1,7 +1,10 @@
 import { Component, inject, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { catchError, of, map } from 'rxjs';
-import { PartApiService, MemoryInformation } from '../../data-access/part-api.service';
+import {
+  PartApiService,
+  MemoryInformation,
+} from '../../data-access/part-api.service';
 import { InfoCardComponent } from '../../ui/info-card/info-card.component';
 
 @Component({
@@ -10,10 +13,21 @@ import { InfoCardComponent } from '../../ui/info-card/info-card.component';
   imports: [InfoCardComponent],
   template: `
     @if(memoryView().information; as memory) {
-    <app-info-card title="Memory name not available" subtitle="Memory Information">
+    <app-info-card
+      title="Memory name not available"
+      subtitle="Memory Information"
+    >
       <div>Total Memory: {{ memory.totalCapacity / 1024 + 'GB' }}</div>
       <div>Voltage: {{ memory.voltage / 1000 + 'V' }}</div>
       <div>Clock Speed: {{ memory.clockSpeed + 'MHz' }}</div>
+    </app-info-card>
+    } @else if (memoryView().error) {
+    <app-info-card title="Error" subtitle="Memory Information">
+      <div class="text-red-500">Error could not load Memory Information</div>
+    </app-info-card>
+    } @else {
+    <app-info-card title="Loading..." subtitle="Memory Information...">
+      <div>Loading...</div>
     </app-info-card>
     }
   `,
@@ -23,18 +37,18 @@ export class MemoryInfoTileComponent {
 
   protected memoryView: Signal<MemoryView> = toSignal(
     this.partApi.getMemoryInfo().pipe(
-      catchError(() =>
-        of<MemoryView>({
-          information: undefined,
-          error: 'Failed to retrieve memory information',
-        })
-      ),
       map(
         (response) =>
           ({
             information: response,
             error: null,
           } as MemoryView)
+      ),
+      catchError(() =>
+        of<MemoryView>({
+          information: undefined,
+          error: 'Failed to retrieve memory information',
+        })
       )
     ),
     {
