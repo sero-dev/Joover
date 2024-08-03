@@ -7,8 +7,6 @@ namespace Joover.API.Tasks;
 
 public class ProcessorUsageTask(IHubContext<PartHub> partHub) : IInvocable
 {
-    private readonly IHubContext<PartHub> partHub = partHub;
-
     public async Task Invoke()
     {
         var usage = GetUsage();

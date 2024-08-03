@@ -7,8 +7,6 @@ namespace Joover.API.Tasks;
 
 public class MemoryUsageTask(IHubContext<PartHub> partHub) : IInvocable
 {
-    private readonly IHubContext<PartHub> partHub = partHub;
-
     public async Task Invoke()
     {
         var availableMemory = GetAvailableMemoryInMb();
