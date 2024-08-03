@@ -18,13 +18,12 @@ export class PartHubService {
   constructor() {
     this.signalRConnection
       .start()
-      .then(() => 'Connection started')
+      .then(() => console.log('Part hub connection started'))
       .catch((err) => console.error('Error while starting connection: ' + err));
 
     this.signalRConnection.on(
       'ReceiveAvailableMemory',
       (availableMemory: number) => {
-        console.log(availableMemory);
         this.availableMemory.next(availableMemory);
       }
     );
@@ -32,7 +31,6 @@ export class PartHubService {
     this.signalRConnection.on(
       'ReceiveProcessorUsage',
       (processorUsage: number) => {
-        console.log(processorUsage);
         this.processorUsage.next(processorUsage);
       }
     );
