@@ -17,7 +17,7 @@ import { MemoryUsageTileComponent } from './feature/memory-usage-tile/memory-usa
     MemoryUsageTileComponent,
   ],
   template: `
-    <div class="grid grid-cols-2 gap-2 max-w-4xl mx-auto">
+    <div class="p-4 grid grid-cols-2 gap-2 max-w-4xl mx-auto">
       <app-processor-info-tile />
       <app-processor-usage-tile />
       <app-memory-info-tile />
