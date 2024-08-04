@@ -12,6 +12,7 @@ builder.Services.AddScheduler();
 
 builder.Services.AddTransient<ProcessorUsageTask>();
 builder.Services.AddTransient<MemoryUsageTask>();
+builder.Services.AddTransient<FakeChatMessageTask>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -33,6 +34,9 @@ app.Services.UseScheduler(scheduler => {
 
     scheduler.Schedule<MemoryUsageTask>()
         .EverySecond();
+
+    scheduler.Schedule<FakeChatMessageTask>()
+        .EverySeconds(3);
 });
 
 // Configure the HTTP request pipeline.
@@ -51,5 +55,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapHub<PartHub>("/hub/part");
+app.MapHub<ChatHub>("/hub/chat");
 
 app.Run();

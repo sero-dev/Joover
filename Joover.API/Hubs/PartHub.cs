@@ -2,6 +2,4 @@
 
 namespace Joover.API.Hubs;
 
-public class PartHub : Hub
-{
-}
+public class PartHub : Hub;
