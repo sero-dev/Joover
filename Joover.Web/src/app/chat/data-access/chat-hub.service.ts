@@ -1,6 +1,14 @@
 import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
-import { from, merge, Observable, Subject } from 'rxjs';
+import {
+  catchError,
+  from,
+  Observable,
+  of,
+  Subject,
+  switchMap,
+  tap,
+} from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -8,17 +16,13 @@ import { from, merge, Observable, Subject } from 'rxjs';
 export class ChatHubService {
   private readonly apiUrl = 'https://localhost:7043';
   private readonly message = new Subject<Message>();
+  private readonly status = new Subject<Status>();
 
   private readonly chatHubConnection = new signalR.HubConnectionBuilder()
     .withUrl(`${this.apiUrl}/hub/chat`)
     .build();
 
   constructor() {
-    this.chatHubConnection
-      .start()
-      .then(() => console.log('Chat Hub connection started'))
-      .catch((err) => console.error('Error while starting connection: ' + err));
-
     this.chatHubConnection.on(
       this.channels.receiveMessage,
       (message: Message) => {
@@ -27,12 +31,34 @@ export class ChatHubService {
     );
   }
 
+  public connect(room: string): Observable<void> {
+    console.log(room);
+
+    this.status.next('connecting');
+    return from(this.chatHubConnection.stop()).pipe(
+      switchMap(() => from(this.chatHubConnection.start())),
+      tap(() => {
+        this.status.next('connected');
+        console.log('Chat Hub connection started');
+      }),
+      catchError((err) => {
+        console.error('Error while starting connection: ' + err);
+        this.status.next('disconnected');
+        return of(void 0);
+      })
+    );
+  }
+
+  public getStatus() {
+    return this.status.asObservable();
+  }
+
   public getMessages(): Observable<Message> {
-    return merge(this.message.asObservable(), from(debugMessages()));
+    return this.message.asObservable();
   }
 
   public sendMessage(text: string): Observable<void> {
-    const message: Message = { text, username: 'Sean Rodrgiuez' };
+    const message: Message = { text, username: 'Sean Rodriguez' };
     return from(this.chatHubConnection.send(this.channels.newMessage, message));
   }
 
@@ -42,52 +68,9 @@ export class ChatHubService {
   };
 }
 
-function debugMessages(): Message[] {
-  return [
-    {
-      text: 'Ullam tempore nulla dolorem excepturi doloremque.',
-      username: 'Alta Beahan',
-    },
-    {
-      text: 'Quae a consectetur cumque odio optio inventore.',
-      username: 'Jan Maggio',
-    },
-    {
-      text: 'Non deleniti commodi itaque alias quaerat eaque exercitationem et facilis.',
-      username: 'Shemar Rohan',
-    },
-    {
-      text: 'Et est autem autem perspiciatis autem sed.',
-      username: 'Amir King',
-    },
-    {
-      text: 'Et blanditiis consequatur voluptates et.',
-      username: 'Theresia Beatty',
-    },
-    {
-      text: 'Ullam tempore nulla dolorem excepturi doloremque.',
-      username: 'Alta Beahan',
-    },
-    {
-      text: 'Quae a consectetur cumque odio optio inventore.',
-      username: 'Jan Maggio',
-    },
-    {
-      text: 'Non deleniti commodi itaque alias quaerat eaque exercitationem et facilis.',
-      username: 'Shemar Rohan',
-    },
-    {
-      text: 'Et est autem autem perspiciatis autem sed.',
-      username: 'Amir King',
-    },
-    {
-      text: 'Et blanditiis consequatur voluptates et.',
-      username: 'Theresia Beatty',
-    },
-  ];
-}
-
 export interface Message {
   text: string;
   username: string;
 }
+
+export type Status = 'connected' | 'disconnected' | 'connecting';

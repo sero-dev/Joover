@@ -1,22 +1,13 @@
-import {
-  AfterContentChecked,
-  AfterViewChecked,
-  AfterViewInit,
-  Component,
-  ElementRef,
-  inject,
-  viewChild,
-} from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { scan } from 'rxjs';
 import { ChatHubService, Message } from '../../data-access/chat-hub.service';
 import { MatCardModule } from '@angular/material/card';
-import { JsonPipe } from '@angular/common';
 
 @Component({
   selector: 'app-chat-window',
   standalone: true,
-  imports: [MatCardModule, JsonPipe],
+  imports: [MatCardModule],
   template: `
     <mat-card class="h-full overflow-y-auto" appearance="outlined">
       <mat-card-content class="mt-auto">
