@@ -5,6 +5,9 @@ import { ProcessorInfoTileComponent } from './feature/processor-info-tile/proces
 import { MemoryInfoTileComponent } from './feature/memory-info-tile/memory-info-tile.component';
 import { ProcessorUsageTileComponent } from './feature/processor-usage-tile/processor-usage-tile.component';
 import { MemoryUsageTileComponent } from './feature/memory-usage-tile/memory-usage-tile.component';
+import { WorkflowComponent } from '../workflow/workflow.component';
+import { HelloStepComponent } from '../workflow/feature/hello-step/hello-step.component';
+import { ResetStepComponent } from '../workflow/feature/reset-step/reset-step.component';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -15,6 +18,9 @@ import { MemoryUsageTileComponent } from './feature/memory-usage-tile/memory-usa
     MemoryInfoTileComponent,
     ProcessorUsageTileComponent,
     MemoryUsageTileComponent,
+    WorkflowComponent,
+    HelloStepComponent,
+    ResetStepComponent,
   ],
   template: `
     <div class="p-4 grid grid-cols-2 gap-2 max-w-4xl mx-auto">
@@ -23,6 +29,13 @@ import { MemoryUsageTileComponent } from './feature/memory-usage-tile/memory-usa
       <app-memory-info-tile />
       <app-memory-usage-tile />
     </div>
+
+    <app-workflow>
+      <app-hello-step #step2 />
+      <app-hello-step #step3 />
+      <app-hello-step #helloStep />
+      <app-reset-step [dependsOn]="[helloStep.directive]" />
+    </app-workflow>
   `,
 })
 export class DashboardComponent {}
