@@ -16,6 +16,14 @@ export const routes: Routes = [
     title: getTitle('Chat'),
   },
   {
+    path: 'light-config',
+    loadComponent: () =>
+      import('./light-config/light-config.component').then(
+        (m) => m.LightConfigComponent
+      ),
+    title: getTitle('Light Config'),
+  },
+  {
     path: '**',
     redirectTo: 'dashboard',
   },
